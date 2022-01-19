@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { addAvatar, getAvatar, getUser, helloUser } from '../../api/v2/user';
+import { addAvatar, getAvatar, getUser, helloUser, regUser, loginUser } from '../../api/v2/user';
 import config from '../../config/config';
 import { outputOkSchema, } from '../../schemes';
 
@@ -92,4 +92,38 @@ export default [
       },
     },
   },
+  {
+    method: 'POST',
+    path: '/v2/user/reg',
+    handler: regUser,
+    options: {
+      auth: false,
+      id: 'v2.user.reg',
+      tags: ['api', 'v2', 'user'],
+      response: {
+        schema: outputOkSchema(
+          Joi.object({
+            message: Joi.string().example('Registred!'),
+          })
+        ),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/v2/user/login',
+    handler: loginUser,
+    options: {
+      auth: false,
+      id: 'v2.user.login',
+      tags: ['api', 'v2', 'user'],
+      response: {
+        schema: outputOkSchema(
+          Joi.object({
+            message: Joi.string().example('Logined!'),
+          })
+        ),
+      },
+    },
+  }
 ];

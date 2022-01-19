@@ -25,6 +25,7 @@ const config_1 = require("./config/config");
 const utils_1 = require("./utils");
 const swagger_1 = require("./config/swagger");
 const pino_1 = require("./config/pino");
+const auth_1 = require("./utils/auth");
 const HapiSwagger = require('hapi-swagger');
 const Package = require('../../package.json');
 swagger_1.default.info.version = Package.version;
@@ -68,6 +69,13 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
             options: config_1.default.cors,
         }
     ]);
+    server.auth.strategy('jwt-access', 'bearer-access-token', {
+        validate: (0, auth_1.tokenValidate)('access'),
+    });
+    server.auth.strategy('jwt-refresh', 'bearer-access-token', {
+        validate: (0, auth_1.tokenValidate)('refresh'),
+    });
+    server.auth.default('jwt-access');
     server.route(routes_1.default);
     try {
         yield server.start();
