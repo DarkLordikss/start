@@ -1,58 +1,19 @@
 import { User, } from '../../models/User';
 import { UserAvatar, } from '../../models/UserAvatar';
 import { error, output, saveImage, } from '../../utils';
-import { Users, Session } from './storage';
-import { decodeJwt, generateJwt } from '../../utils/auth';
-import { Errors } from '../../utils/errors';
 
 export async function getUser(r) {
   return output({ firstName: 'John', });
 }
 
 export async function helloUser(r) {
-  if (r.payload.id == undefined) {
-    throw error(Errors.InvalidPayload, 'No id in request!', {});
-  } else if (Users[r.payload.id] == undefined) {
-    throw error(Errors.InvalidPayload, 'Incorrect id!', {});
-  }
-  return output({ message: `Hello, ${Users[r.payload.id].name}!`, });
-}
-
-export async function regUser(r) {
-  if (r.payload.name == undefined || r.payload.password == undefined) {
-    throw error(Errors.InvalidPayload, 'No name or password in request!', {});
-  }
-  const uuid = String(require('uuid').v4());
-  const user_name = r.payload.name;
-  const user_password = r.payload.password;
-  Users[uuid] = {name: user_name, password: user_password, id: uuid};
-  return output({ message: `Registrated! UUID - ${uuid}`, });
-}
-
-export async function loginUser(r) {
-  if (r.payload.name == undefined || r.payload.password == undefined) {
-    throw error(Errors.InvalidPayload, 'No name or password in request!', {});
-  }
-  const user_name = r.payload.name;
-  const user_password = r.payload.password;
-  const user_data = {name: user_name, password: user_password};
-  var authed = false;
-  let authed_key = null;
-
-  for (var key in Users) {
-    if (Users[key].name == user_data.name && Users[key].password == user_data.password) {
-      authed = true;
-      authed_key = key;
-      break;
-    }
-  }
-
-  if (authed == true) {
-    Session[authed_key] = Users[authed_key];
-    return output({ message: generateJwt( Session[authed_key], ) });
-  } else {
-    return error(401003, "Invalid credits!", null);
-  }
+  const users = {
+    c42021e3122c43f6a0a4212d7b02e9d1: "John",
+    dg3268gd328g326dg23: "Alex",
+    jf298fh298d328: "Anon",
+  };
+  const uid = r.payload.id;
+  return output({ message: `Hello, ${users[uid]}!`, });
 }
 
 export const getAvatar = async (r) => {
