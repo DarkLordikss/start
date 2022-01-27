@@ -2,6 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import config from '../config/config';
 import {error,} from './index';
 import {Errors,} from './errors';
+import { checkSession } from '../api/v2/storage';
 
 export const generateJwt = (data: object) => {
   const access = jwt.sign(data, config.auth.jwt.access.secret, {expiresIn: config.auth.jwt.access.lifetime,});
@@ -26,15 +27,12 @@ export type validateFunc = (r, token: string) => Promise<any>;
 export function tokenValidate(tokenType: 'access' | 'refresh'): validateFunc {
   return async function (r, token: string) {
     const data = await decodeJwt(token, config.auth.jwt[tokenType].secret);
-    // const {user,} = await Session.findByPk(data.id, {
-    //   include: [{model: User,}],
-    // });
-    // if (Session[data.id] == undefined) {
-    //   throw error(Errors.SessionNotFound, 'User not found', {});
-    // }
-
-    // if (Session[data.id]["name"] == data.name && Session[data.id]["password"] == data.password) {
-    //    return {isValid: true, credentials: data, artifacts: {token, type: tokenType,},};
-    //  }
+    console.log(data)
+    const session = await checkSession(data.username, data.id);
+     if (session === true) {
+       return {isValid: true, credentials: data, artifacts: {token, type: tokenType,},};
+     } else {
+       throw error(Errors.SessionNotFound, 'User not found', {});
+     }
   };
 }

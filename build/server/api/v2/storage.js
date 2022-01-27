@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkUser = exports.addUser = void 0;
+exports.checkUser = exports.checkSession = exports.addUser = void 0;
 const { Sequelize, Model, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('postgresql://postgres:123123@localhost:5432/postgres');
 class User extends Model {
@@ -68,6 +68,24 @@ function addUser(user_data) {
     });
 }
 exports.addUser = addUser;
+function checkSession(username, uuid) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const session = yield Session.findOne({
+            where: {
+                username: username,
+                uuid: uuid,
+            }
+        });
+        console.log(session);
+        if (session != null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
+}
+exports.checkSession = checkSession;
 function checkUser(user_name, user_password) {
     return __awaiter(this, void 0, void 0, function* () {
         yield sequelize.sync();

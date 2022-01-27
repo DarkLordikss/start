@@ -14,6 +14,7 @@ const jwt = require("jsonwebtoken");
 const config_1 = require("../config/config");
 const index_1 = require("./index");
 const errors_1 = require("./errors");
+const storage_1 = require("../api/v2/storage");
 const generateJwt = (data) => {
     const access = jwt.sign(data, config_1.default.auth.jwt.access.secret, { expiresIn: config_1.default.auth.jwt.access.lifetime, });
     const refresh = jwt.sign(data, config_1.default.auth.jwt.refresh.secret, { expiresIn: config_1.default.auth.jwt.refresh.lifetime, });
@@ -35,6 +36,14 @@ function tokenValidate(tokenType) {
     return function (r, token) {
         return __awaiter(this, void 0, void 0, function* () {
             const data = yield (0, exports.decodeJwt)(token, config_1.default.auth.jwt[tokenType].secret);
+            console.log(data);
+            const session = yield (0, storage_1.checkSession)(data.username, data.id);
+            if (session === true) {
+                return { isValid: true, credentials: data, artifacts: { token, type: tokenType, }, };
+            }
+            else {
+                throw (0, index_1.error)(errors_1.Errors.SessionNotFound, 'User not found', {});
+            }
         });
     };
 }

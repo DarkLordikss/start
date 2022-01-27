@@ -1,10 +1,5 @@
 import * as Joi from 'joi';
-<<<<<<< Updated upstream
-import { addAvatar, getAvatar, getUser, helloUser } from '../../api/v2/user';
-=======
 import { helloUser, regUser, loginUser } from '../../api/v2/user';
->>>>>>> Stashed changes
-import config from '../../config/config';
 import { outputOkSchema, } from '../../schemes';
 
 export default [
@@ -24,8 +19,6 @@ export default [
       },
     },
   },
-<<<<<<< Updated upstream
-=======
   {
     method: 'POST',
     path: '/v2/user/reg',
@@ -82,5 +75,4 @@ export default [
       },
     },
   }
->>>>>>> Stashed changes
 ];

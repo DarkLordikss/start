@@ -61,6 +61,20 @@ export async function addUser(user_data) {
   await User.create(user_data);
 }
 
+export async function checkSession(username, uuid) {
+  const session = await Session.findOne({
+    where: {
+      username: username,
+      uuid: uuid,
+    }});
+  console.log(session);
+  if (session != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export async function checkUser(user_name, user_password){
   await sequelize.sync();
   const user = await User.findOne({

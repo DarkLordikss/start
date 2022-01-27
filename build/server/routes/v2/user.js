@@ -18,8 +18,6 @@ exports.default = [
             },
         },
     },
-<<<<<<< Updated upstream
-=======
     {
         method: 'POST',
         path: '/v2/user/reg',
@@ -72,6 +70,5 @@ exports.default = [
             },
         },
     }
->>>>>>> Stashed changes
 ];
 //# sourceMappingURL=user.js.map

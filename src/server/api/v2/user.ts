@@ -2,26 +2,11 @@
 //import { UserAvatar, } from '../../models/UserAvatar';
 import { sha256} from 'js-sha256';
 import { error, output, saveImage, } from '../../utils';
-<<<<<<< Updated upstream
-=======
 import { addUser, checkUser } from './storage';
-import { decodeJwt, generateJwt } from '../../utils/auth';
+import { generateJwt } from '../../utils/auth';
 import { Errors } from '../../utils/errors';
->>>>>>> Stashed changes
 
 export async function helloUser(r) {
-<<<<<<< Updated upstream
-  const users = {
-    c42021e3122c43f6a0a4212d7b02e9d1: "John",
-    dg3268gd328g326dg23: "Alex",
-    jf298fh298d328: "Anon",
-  };
-  const uid = r.payload.id;
-  return output({ message: `Hello, ${users[uid]}!`, });
-}
-
-export const getAvatar = async (r) => {
-=======
   return output({ message: `Hello!`, });
 }
 
@@ -39,7 +24,6 @@ export async function regUser(r) {
 }
 
 export async function loginUser(r) {
->>>>>>> Stashed changes
   try {
   const user_name = r.payload.username;
   const user_password = sha256(r.payload.password);
