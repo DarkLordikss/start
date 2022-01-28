@@ -1,59 +1,40 @@
-import { User, } from '../../models/User';
-import { UserAvatar, } from '../../models/UserAvatar';
+//import { User, } from '../../models/User';
+//import { UserAvatar, } from '../../models/UserAvatar';
+import { sha256} from 'js-sha256';
 import { error, output, saveImage, } from '../../utils';
-
-export async function getUser(r) {
-  return output({ firstName: 'John', });
-}
+import { addUser, checkUser } from './storage';
+import { generateJwt } from '../../utils/auth';
+import { Errors } from '../../utils/errors';
 
 export async function helloUser(r) {
-  const users = {
-    c42021e3122c43f6a0a4212d7b02e9d1: "John",
-    dg3268gd328g326dg23: "Alex",
-    jf298fh298d328: "Anon",
-  };
-  const uid = r.payload.id;
-  return output({ message: `Hello, ${users[uid]}!`, });
+  return output({ message: `Hello!`, });
 }
 
-export const getAvatar = async (r) => {
+export async function regUser(r) {
+  const uuid = String(require('uuid').v4());
+  const user_data = r.payload;
+  user_data.password = sha256(r.payload.password);
+  user_data["id"] = uuid;
   try {
-    const user: User = await User.findByPk(r.auth.credentials.id, {
-      include: {
-        model: UserAvatar,
-        as: 'avatar',
-      },
-    });
-    const avatarAsBase64 = `data:image/png;base64${user.avatar.image.toString('base64')}`;
-    return output({ data: avatarAsBase64, userId: user.id, });
-  }
-  catch (err) {
-    console.log(err);
-    throw err;
-  }
-};
+    await addUser(user_data);
+  } catch (er) {
+    throw error(Errors.RepeatUser, 'This user already exists!', {});
+  };
+  return output({ message: `Registrated! UUID - ${uuid}`, });
+}
 
-export const addAvatar = async (r) => {
+export async function loginUser(r) {
   try {
-    const user: User = r.auth.credentials;
-
-    // this is basic example code, you may do with received file whatever you want
-    const { avatarImage, } = r.payload;
-    const previousAvatar = await UserAvatar.findOne({ where: { userId: user.id, }, });
-    if (previousAvatar) {
-      await previousAvatar.destroy();
-    }
-
-    await saveImage(user.id, avatarImage);
-
-    return output({ message: 'Your avatar has been added!', });
+  const user_name = r.payload.username;
+  const user_password = sha256(r.payload.password);
+  const check = await checkUser(user_name, user_password);
+  if (check !== null) {
+    return output({ message: generateJwt({ id: check, username: user_name, }), });
+  } else {
+    throw error(Errors.SessionNotFound, 'InvalidCredits', {});
   }
-  catch (err) {
-    if (err.message == 'This file type is now allowed') {
-      return error(400000, 'This file type is now allowed', null);
-    }
+} catch (e) {
+  console.log(e)
+}}
 
-    console.log(err);
-    throw err;
-  }
-};
+

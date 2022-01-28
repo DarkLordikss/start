@@ -1,10 +1,11 @@
 export enum Errors {
   // Invalid payload errors (400)
   InvalidPayload = 400000,
+  RepeatUser,
   // Authorization errors (401)
   TokenExpired = 401001,
   TokenInvalid = 401002,
-  SessionNotFound = 401003,
+  SessionNotFound = 401004,
   // Not found (404)
   NotFound = 404000,
 }
