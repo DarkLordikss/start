@@ -2,7 +2,7 @@ import * as jwt from 'jsonwebtoken';
 import config from '../config/config';
 import {error,} from './index';
 import {Errors,} from './errors';
-import { checkSession } from '../api/v2/storage';
+import { checkSession } from '../api/v1/storage';
 
 export const generateJwt = (data: object) => {
   const access = jwt.sign(data, config.auth.jwt.access.secret, {expiresIn: config.auth.jwt.access.lifetime,});
