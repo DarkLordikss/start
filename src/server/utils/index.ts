@@ -3,15 +3,10 @@ import { Boom, } from '@hapi/boom';
 import * as FileType from 'file-type';
 import * as speakeasy from 'speakeasy';
 import config from '../config/config';
-import { UserAvatar, } from '../models/UserAvatar';
 
 interface IFileWithExt {
   data: Buffer;
   fileExt: string;
-}
-
-export function getUUID(): string {
-  return uuidv4();
 }
 
 export function getRealIp(request): string {
@@ -95,17 +90,3 @@ export const getFileExt = async (file: Buffer): Promise<IFileWithExt> => {
   return { data: file, fileExt: fileExt.ext, };
 };
 
-export const saveImage = async (userId: string, file: Buffer) => {
-  try {
-    const fileWithExt = await getFileExt(file);
-    console.log(fileWithExt.fileExt);
-    // await UserAvatar.create({
-    //   data: fileWithExt.data,
-    //   userId,
-    //   ext: fileWithExt.fileExt,
-    // });
-  }
-  catch (err) {
-    throw err;
-  }
-};

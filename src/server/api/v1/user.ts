@@ -1,7 +1,5 @@
-//import { User, } from '../../models/User';
-//import { UserAvatar, } from '../../models/UserAvatar';
 import { sha256} from 'js-sha256';
-import { error, output, saveImage, } from '../../utils';
+import { error, output, } from '../../utils';
 import { addUser, checkUser } from './storage';
 import { generateJwt } from '../../utils/auth';
 import { Errors } from '../../utils/errors';
