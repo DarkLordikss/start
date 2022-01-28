@@ -8,11 +8,11 @@ export default {
     jwt: {
       access: {
         secret: process.env.JWT_ACCESS_SECRET,
-        lifetime: Number(process.env.JWT_ACCESS_LIFETIME),
+        lifetime: Number(123123123),
       },
       refresh: {
         secret: process.env.JWT_REFRESH_SECRET,
-        lifetime: Number(process.env.JWT_REFRESH_LIFETIME),
+        lifetime: Number(123123123),
       },
     },
   },

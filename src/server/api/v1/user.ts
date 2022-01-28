@@ -1,49 +1,34 @@
-import { User, } from '../../models/User';
-import { UserAvatar, } from '../../models/UserAvatar';
-import { error, output, saveImage, } from '../../utils';
+import { sha256} from 'js-sha256';
+import { error, output, } from '../../utils';
+import { addUser, checkUser } from './storage';
+import { generateJwt } from '../../utils/auth';
+import { Errors } from '../../utils/errors';
 
-export async function getUser(r) {
-  return output({ firstName: 'John', });
+export async function regUser(r) {
+  const uuid = String(require('uuid').v4());
+  const user_data = r.payload;
+  user_data.password = sha256(r.payload.password);
+  user_data["id"] = uuid;
+  try {
+    await addUser(user_data);
+  } catch (er) {
+    throw error(Errors.RepeatUser, 'This user already exists!', {});
+  };
+  return output({ message: `Registrated! UUID - ${uuid}`, });
 }
 
-export const getAvatar = async (r) => {
+export async function loginUser(r) {
   try {
-    const user: User = await User.findByPk(r.auth.credentials.id, {
-      include: {
-        model: UserAvatar,
-        as: 'avatar',
-      },
-    });
-    const avatarAsBase64 = `data:image/png;base64${user.avatar.image.toString('base64')}`;
-    return output({ data: avatarAsBase64, userId: user.id, });
+  const user_name = r.payload.username;
+  const user_password = sha256(r.payload.password);
+  const check = await checkUser(user_name, user_password);
+  if (check !== null) {
+    return output({ message: generateJwt({ id: check, username: user_name, }), });
+  } else {
+    throw error(Errors.SessionNotFound, 'InvalidCredits', {});
   }
-  catch (err) {
-    console.log(err);
-    throw err;
-  }
-};
+} catch (e) {
+  console.log(e)
+}}
 
-export const addAvatar = async (r) => {
-  try {
-    const user: User = r.auth.credentials;
 
-    // this is basic example code, you may do with received file whatever you want
-    const { avatarImage, } = r.payload;
-    const previousAvatar = await UserAvatar.findOne({ where: { userId: user.id, }, });
-    if (previousAvatar) {
-      await previousAvatar.destroy();
-    }
-
-    await saveImage(user.id, avatarImage);
-
-    return output({ message: 'Your avatar has been added!', });
-  }
-  catch (err) {
-    if (err.message == 'This file type is now allowed') {
-      return error(400000, 'This file type is now allowed', null);
-    }
-
-    console.log(err);
-    throw err;
-  }
-};
