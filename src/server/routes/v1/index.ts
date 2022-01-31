@@ -1,2 +1,4 @@
 import user from './user';
-export default [...user];
+import profile from './profile';
+
+export default [...user, ...profile];
