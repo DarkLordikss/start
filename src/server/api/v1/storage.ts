@@ -147,3 +147,21 @@ export async function updateUser(upd_data, uuid) {
   console.log(user);
   await user.update(upd_data);
 }
+
+export async function updateProfile(upd_data, uuid) {
+  await sequelize.sync();
+  const profile = await Profile.findOne({
+    where: {
+      user_id: uuid,
+      university: upd_data.university
+    }});
+  if (profile == null) {
+    return false;
+  } else if (profile.is_teacher == true) {
+    upd_data["group"] = null;
+    await profile.update(upd_data);
+  } else {
+    await profile.update(upd_data);
+  }
+  console.log(profile);
+}

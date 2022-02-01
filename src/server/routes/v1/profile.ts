@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { createStudent, createTeacher } from '../../api/v1/profile';
+import { createStudent, createTeacher, editProfile } from '../../api/v1/profile';
 import { outputOkSchema, } from '../../schemes';
 
 export default [
@@ -49,6 +49,32 @@ export default [
                 schema: outputOkSchema(
                     Joi.object({
                         message: Joi.string().example('Created!'),
+                    })
+                ),
+            },
+        },
+    },
+    {
+        method: 'POST',
+        path: '/v1/profile/edit',
+        handler: editProfile,
+        options: {
+            id: 'v1.profile.edit',
+            tags: ['api', 'v1', 'user'],
+            validate: {
+                payload: Joi.object({
+                    university: Joi.string().required(),
+                    faculty: Joi.string(),
+                    group: Joi.string()
+                }),
+                failAction: (req, h, err) => (err.isJoi
+                    ? h.response(err.details[0]).takeover().code(400)
+                    : h.response(err).takeover()),
+            },
+            response: {
+                schema: outputOkSchema(
+                    Joi.object({
+                        message: Joi.string().example('Edited!'),
                     })
                 ),
             },
