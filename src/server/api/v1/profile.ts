@@ -1,12 +1,9 @@
 import { error, output, } from '../../utils';
 import { addProfile, checkProfile} from './storage';
 import { Errors } from '../../utils/errors';
-import { decodeJwt } from '../../utils/auth';
 
 export async function createStudent(r) {
-    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
     const user_data = r.payload;
-    user_data["user_id"] = token.id;
     const checkDupliccate = await checkProfile(user_data);
     if (checkDupliccate) {
         user_data["is_teacher"] = 0;
@@ -18,9 +15,7 @@ export async function createStudent(r) {
 }
 
 export async function createTeacher(r) {
-    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
     const user_data = r.payload;
-    user_data["user_id"] = token.id;
     const checkDupliccate = await checkProfile(user_data);
     if (checkDupliccate) {
         user_data["is_teacher"] = 1;
