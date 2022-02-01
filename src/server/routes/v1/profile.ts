@@ -15,7 +15,6 @@ export default [
                     faculty: Joi.string().required(),
                     university: Joi.string().required(),
                     group: Joi.string().required(),
-                    user_id: Joi.string().required()
                 }),
                 failAction: (req, h, err) => (err.isJoi
                     ? h.response(err.details[0]).takeover().code(400)
@@ -41,7 +40,6 @@ export default [
                 payload: Joi.object({
                     faculty: Joi.string().required(),
                     university: Joi.string().required(),
-                    user_id: Joi.string().required()
                 }),
                 failAction: (req, h, err) => (err.isJoi
                     ? h.response(err.details[0]).takeover().code(400)
