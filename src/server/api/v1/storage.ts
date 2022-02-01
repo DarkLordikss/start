@@ -137,3 +137,13 @@ export async function checkProfile(user_data) {
     }});
   return dublicate == null;
 }
+
+export async function updateUser(upd_data, uuid) {
+  await sequelize.sync();
+  const user = await User.findOne({
+    where: {
+      id: uuid,
+    }});
+  console.log(user);
+  await user.update(upd_data);
+}

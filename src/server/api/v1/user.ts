@@ -1,8 +1,9 @@
 import { sha256} from 'js-sha256';
 import { error, output, } from '../../utils';
-import { addUser, checkUser } from './storage';
-import { generateJwt } from '../../utils/auth';
+import { addUser, checkUser, updateUser } from './storage';
+import { generateJwt, decodeJwt } from '../../utils/auth';
 import { Errors } from '../../utils/errors';
+import * as jwt from 'jsonwebtoken';
 
 export async function regUser(r) {
   const uuid = String(require('uuid').v4());
@@ -31,4 +32,13 @@ export async function loginUser(r) {
   console.log(e)
 }}
 
+export async function editUser(r){
+  const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
+  const upd_data = r.payload;
+  if ("password" in upd_data) {
+    upd_data.password = sha256(upd_data.password)
+  }
+  await updateUser(upd_data, token.id);
+  return output({ message: "Edited!", });
+}
 
