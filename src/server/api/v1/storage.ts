@@ -7,6 +7,7 @@ const sequelize = new Sequelize('postgresql://postgres:123123@localhost:5432/pos
 class User extends Model {}
 class Session extends Model {}
 class Profile extends Model {}
+class Mark extends Model {}
 
 User.init({
   id: {
@@ -84,6 +85,32 @@ Profile.init(
         allowNull: false,
       }
     }, { sequelize, modelName: 'profile' }
+)
+
+Mark.init(
+    {
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
+      student_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      teacher_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      grade: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      lesson: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    }, { sequelize, modelName: 'mark' }
 )
 
 export async function addUser(user_data) {
@@ -164,4 +191,29 @@ export async function updateProfile(upd_data, uuid) {
     await profile.update(upd_data);
   }
   console.log(profile);
+}
+
+export async function checkStudentForTeacher(uuid, student_id) {
+  const student = await Profile.findByPk(student_id);
+  if (student != null) {
+    const teacher = await Profile.findOne({
+      where: {
+        user_id: uuid,
+        university: student.university,
+        faculty: student.faculty,
+        is_teacher: true
+      }});
+    if (teacher != null) {
+      return teacher.id;
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+}
+
+export async function addMark(data) {
+  await sequelize.sync();
+  await Mark.create(data);
 }

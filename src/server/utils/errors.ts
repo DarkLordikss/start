@@ -9,4 +9,6 @@ export enum Errors {
   SessionNotFound = 401004,
   // Not found (404)
   NotFound = 404000,
+  // Forbidden (403)
+  AccessDenied = 403000,
 }

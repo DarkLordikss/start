@@ -1,5 +1,5 @@
 import { error, output, } from '../../utils';
-import { addProfile, checkProfile, updateProfile } from './storage';
+import { addProfile, checkProfile, updateProfile, addMark, checkStudentForTeacher } from './storage';
 import { Errors } from '../../utils/errors';
 import { decodeJwt } from '../../utils/auth';
 
@@ -40,5 +40,18 @@ export async function editProfile(r) {
         return output({ message: "Edited!", });
     } else {
         throw error(Errors.NotFound, 'You have no profile in this university!', {})
+    }
+}
+
+export async function rate(r) {
+    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
+    const data = r.payload;
+    const teacher = await checkStudentForTeacher(token.id, data.student_id);
+    if (teacher != null) {
+        data["teacher_id"] = teacher;
+        await addMark(data);
+        return output({ message: "Rated!", });
+    } else {
+        throw error(Errors.AccessDenied, 'Access for this denied!', {})
     }
 }
