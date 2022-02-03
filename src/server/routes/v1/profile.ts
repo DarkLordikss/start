@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { createStudent, createTeacher, editProfile, rate } from '../../api/v1/profile';
+import { createStudent, createTeacher, editProfile, createMark } from '../../api/v1/profile';
 import { outputOkSchema, } from '../../schemes';
 
 export default [
@@ -82,10 +82,10 @@ export default [
     },
     {
         method: 'POST',
-        path: '/v1/profile/teacher/rate',
-        handler: rate,
+        path: '/v1/profile/teacher/mark/create',
+        handler: createMark,
         options: {
-            id: 'v1.profile.teacher.rate',
+            id: 'v1.profile.teacher.mark.create',
             tags: ['api', 'v1', 'user'],
             validate: {
                 payload: Joi.object({

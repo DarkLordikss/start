@@ -43,7 +43,7 @@ export async function editProfile(r) {
     }
 }
 
-export async function rate(r) {
+export async function createMark(r) {
     const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
     const data = r.payload;
     const teacher = await checkStudentForTeacher(token.id, data.student_id);
