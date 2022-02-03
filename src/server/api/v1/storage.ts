@@ -213,7 +213,32 @@ export async function checkStudentForTeacher(uuid, student_id) {
   }
 }
 
+export async function getStudentId(grade_id) {
+  const grade = await Mark.findByPk(grade_id);
+  if (grade != null) {
+    return grade.student_id;
+  } else {
+    return null;
+  }
+}
+
 export async function addMark(data) {
   await sequelize.sync();
   await Mark.create(data);
+}
+
+export async function updateMark(data, teacher_id) {
+  const grade = await Mark.findOne({
+    where: {
+      id: data.grade_id,
+      teacher_id: teacher_id
+    }});
+  if (grade != null) {
+    await grade.update({
+      grade: data.new_grade,
+    });
+    return true;
+  } else {
+    return null;
+  }
 }

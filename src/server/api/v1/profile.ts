@@ -1,5 +1,5 @@
 import { error, output, } from '../../utils';
-import { addProfile, checkProfile, updateProfile, addMark, checkStudentForTeacher } from './storage';
+import { addProfile, checkProfile, updateProfile, addMark, checkStudentForTeacher, getStudentId, updateMark } from './storage';
 import { Errors } from '../../utils/errors';
 import { decodeJwt } from '../../utils/auth';
 
@@ -53,5 +53,26 @@ export async function createMark(r) {
         return output({ message: "Rated!", });
     } else {
         throw error(Errors.AccessDenied, 'Access for this denied!', {})
+    }
+}
+
+export async function editMark(r) {
+    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
+    const data = r.payload;
+    const student_id = await getStudentId(data.grade_id);
+    if (student_id != null) {
+        const teacher_id = await checkStudentForTeacher(token.id, student_id);
+        if (teacher_id != null) {
+            const new_grade = await updateMark(data, teacher_id);
+            if (new_grade != null) {
+                return output({ message: "Edited!", });
+            } else {
+                throw error(Errors.AccessDenied, 'Access for this denied!', {});
+            }
+        } else {
+            throw error(Errors.AccessDenied, 'Access for this denied!', {});
+        }
+    } else {
+        throw error(Errors.NotFound, 'Grade not found!', {});
     }
 }
