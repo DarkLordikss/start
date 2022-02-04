@@ -4,6 +4,7 @@ import { addProfile, checkProfile, updateProfile, addMark,
          checkStudent, getStudentMarks } from './storage';
 import { Errors } from '../../utils/errors';
 import { decodeJwt } from '../../utils/auth';
+import { marksAvg } from '../../utils/avg';
 
 export async function createStudent(r) {
     const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
@@ -82,14 +83,10 @@ export async function editMark(r) {
 export async function studentAvg(r) {
     const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
     const data = r.payload;
-    let avg = 0;
     if (await checkStudent(token.id, data.student_id) || await checkStudentForTeacher(token.id, data.student_id) != null) {
         const marks = await getStudentMarks(data.student_id);
         if (marks != null) {
-            for (let i = 0; i < marks.length; i++) {
-                avg += marks[i]['grade'];
-            }
-            avg /= marks.length;
+            const avg = await marksAvg(marks);
             return output({ message: `Avg - ${avg.toFixed(2)}`, });
         } else {
             throw error(Errors.NotFound, 'Marks not found!', {});
