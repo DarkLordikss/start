@@ -213,7 +213,7 @@ export async function checkStudentForTeacher(uuid, student_id) {
   }
 }
 
-export async function getStudentId(grade_id) {
+export async function getStudentIdFromGrade(grade_id) {
   const grade = await Mark.findByPk(grade_id);
   if (grade != null) {
     return grade.student_id;
