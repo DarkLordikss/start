@@ -242,3 +242,24 @@ export async function updateMark(data, teacher_id) {
     return null;
   }
 }
+
+export async function checkStudent(uuid, student_id) {
+  const student = await Profile.findOne({
+    where: {
+      id: student_id,
+      user_id: uuid,
+    }});
+  if (student != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export async function getStudentMarks(student_id) {
+  const marks = await Mark.findAll({
+    where: {
+      student_id: student_id,
+    }});
+  return marks;
+}

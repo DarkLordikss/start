@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { createStudent, createTeacher, editProfile, createMark, editMark } from '../../api/v1/profile';
+import { createStudent, createTeacher, editProfile, createMark, editMark, studentAvg } from '../../api/v1/profile';
 import { outputOkSchema, } from '../../schemes';
 
 export default [
@@ -126,6 +126,30 @@ export default [
                 schema: outputOkSchema(
                     Joi.object({
                         message: Joi.string().example('Edited!'),
+                    })
+                ),
+            },
+        },
+    },
+    {
+        method: 'POST',
+        path: '/v1/profile/student_avg',
+        handler: studentAvg,
+        options: {
+            id: 'v1.profile.student_avg',
+            tags: ['api', 'v1', 'user'],
+            validate: {
+                payload: Joi.object({
+                    student_id: Joi.number().required(),
+                }),
+                failAction: (req, h, err) => (err.isJoi
+                    ? h.response(err.details[0]).takeover().code(400)
+                    : h.response(err).takeover()),
+            },
+            response: {
+                schema: outputOkSchema(
+                    Joi.object({
+                        message: Joi.string().example('Avg - 4.5'),
                     })
                 ),
             },
