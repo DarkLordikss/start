@@ -256,10 +256,53 @@ export async function checkStudent(uuid, student_id) {
   }
 }
 
+export async function checkTeacher(data) {
+  const teacher = await Profile.findOne({
+    where: data});
+  if (teacher != null) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export async function getStudentMarks(student_id) {
   const marks = await Mark.findAll({
     where: {
       student_id: student_id,
     }});
   return marks;
+}
+export async function getFacultyIds(data) {
+  const students = await Profile.findAll({
+    where: {
+      is_teacher: false,
+      university: data.university,
+      faculty: data.faculty,
+    }});
+  if (students != null) {
+    let student_ids = [];
+    for (let i = 0; i < students.length; i++) {
+      student_ids.push(students[i]['id']);
+    }
+    return student_ids;
+  } else {
+    return null;
+  }
+}
+
+export async function getStudentsMarksAvg(student_ids) {
+  let avg = 0;
+  let k = 0;
+  for (let i = 0; i < student_ids.length; i++) {
+    const marks = await Mark.findAll({
+      where: {
+        student_id: student_ids[i]
+      }});
+    for (let x = 0; x < marks.length; x++) {
+      avg += marks[x]['grade'];
+      k += 1;
+    }
+  }
+  return (avg/k);
 }

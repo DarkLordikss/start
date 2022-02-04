@@ -1,7 +1,8 @@
 import { error, output, } from '../../utils';
 import { addProfile, checkProfile, updateProfile, addMark,
          checkStudentForTeacher, getStudentIdFromGrade, updateMark,
-         checkStudent, getStudentMarks } from './storage';
+         checkStudent, getStudentMarks, checkTeacher, getFacultyIds,
+         getStudentsMarksAvg} from './storage';
 import { Errors } from '../../utils/errors';
 import { decodeJwt } from '../../utils/auth';
 import { marksAvg } from '../../utils/avg';
@@ -90,6 +91,24 @@ export async function studentAvg(r) {
             return output({ message: `Avg - ${avg.toFixed(2)}`, });
         } else {
             throw error(Errors.NotFound, 'Marks not found!', {});
+        }
+    } else {
+        throw error(Errors.AccessDenied, 'Access for this denied!', {});
+    }
+}
+
+export async function facultyAvg(r) {
+    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
+    const data = r.payload;
+    data["is_teacher"] = true;
+    data["user_id"] = token.id;
+    if (await checkTeacher(data)) {
+        const student_ids = await getFacultyIds(data);
+        if (student_ids != null) {
+            const avg = await getStudentsMarksAvg(student_ids);
+            return output({ message: `Avg - ${avg.toFixed(2)}`, });
+        } else {
+            throw error(Errors.NotFound, 'Students not found!', {});
         }
     } else {
         throw error(Errors.AccessDenied, 'Access for this denied!', {});
