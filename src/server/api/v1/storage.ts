@@ -257,6 +257,7 @@ export async function checkStudent(uuid, student_id) {
 }
 
 export async function checkTeacher(data) {
+  data["group"] = null;
   const teacher = await Profile.findOne({
     where: data});
   if (teacher != null) {
