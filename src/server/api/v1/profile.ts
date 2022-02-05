@@ -2,7 +2,7 @@ import { error, output, } from '../../utils';
 import { addProfile, checkProfile, updateProfile, addMark,
          checkStudentForTeacher, getStudentIdFromGrade, updateMark,
          checkStudent, getStudentMarks, checkTeacher, getFacultyIds,
-         getStudentsMarksAvg, getGroupIds } from './storage';
+         getStudentsMarksAvg, getGroupIds, getStudentId, getLessonMarks } from './storage';
 import { Errors } from '../../utils/errors';
 import { decodeJwt } from '../../utils/auth';
 import { marksAvg } from '../../utils/avg';
@@ -130,5 +130,24 @@ export async function groupAvg(r) {
         }
     } else {
         throw error(Errors.AccessDenied, 'Access for this denied!', {});
+    }
+}
+
+export async function lessonAvg(r) {
+    const token = await decodeJwt(r.headers.authorization.replace('Bearer ', ''), process.env.JWT_ACCESS_SECRET);
+    const data = r.payload;
+    data["user_id"] = token.id;
+    const student_id = await getStudentId(data);
+    if (student_id != null) {
+        data["student_id"] = student_id;
+        const marks = await getLessonMarks(data);
+        if (marks.length != 0) {
+            const avg = await marksAvg(marks);
+            return output({ message: `Avg - ${avg.toFixed(2)}`, });
+        } else {
+            throw error(Errors.NotFound, 'Marks not found!', {});
+        }
+    } else {
+        throw error(Errors.NotFound, 'Student not found!', {});
     }
 }

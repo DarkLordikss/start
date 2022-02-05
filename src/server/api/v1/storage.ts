@@ -326,3 +326,25 @@ export async function getStudentsMarksAvg(student_ids) {
   }
   return (avg/k);
 }
+
+export async function getStudentId(data) {
+  const student = await Profile.findOne({
+    where: {
+      is_teacher: false,
+      user_id: data.user_id,
+    }});
+  if (student != null) {
+    return student.id;
+  } else {
+    return null;
+  }
+}
+
+export async function getLessonMarks(data) {
+  const marks = await Mark.findAll({
+    where: {
+      student_id: data.student_id,
+      lesson: data.lesson,
+    }});
+  return marks;
+}
