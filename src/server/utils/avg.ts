@@ -6,3 +6,11 @@ export async function marksAvg(marks) {
     avg /= marks.length;
     return avg;
 }
+
+export async function marksList(marks) {
+    let marks_list = [];
+    for (let i = 0; i < marks.length; i++) {
+        marks_list.push(marks[i]['grade']);
+    }
+    return marks_list;
+}
