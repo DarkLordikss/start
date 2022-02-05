@@ -212,7 +212,7 @@ export default [
         path: '/v1/profile/student/lesson_avg',
         handler: lessonAvg,
         options: {
-            id: 'v1.profile.student.group_avg',
+            id: 'v1.profile.student.lesson_avg',
             tags: ['api', 'v1', 'user'],
             validate: {
                 payload: Joi.object({
