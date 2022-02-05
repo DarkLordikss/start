@@ -1,6 +1,6 @@
 import * as Joi from 'joi';
 import { createStudent, createTeacher, editProfile, createMark, editMark, studentAvg,
-         facultyAvg } from '../../api/v1/profile';
+         facultyAvg, groupAvg } from '../../api/v1/profile';
 import { outputOkSchema, } from '../../schemes';
 
 export default [
@@ -167,6 +167,32 @@ export default [
                 payload: Joi.object({
                     university: Joi.string().required(),
                     faculty: Joi.string().required(),
+                }),
+                failAction: (req, h, err) => (err.isJoi
+                    ? h.response(err.details[0]).takeover().code(400)
+                    : h.response(err).takeover()),
+            },
+            response: {
+                schema: outputOkSchema(
+                    Joi.object({
+                        message: Joi.string().example('Avg - 4.5'),
+                    })
+                ),
+            },
+        },
+    },
+    {
+        method: 'POST',
+        path: '/v1/profile/teacher/group_avg',
+        handler: groupAvg,
+        options: {
+            id: 'v1.profile.teacher.group_avg',
+            tags: ['api', 'v1', 'user'],
+            validate: {
+                payload: Joi.object({
+                    university: Joi.string().required(),
+                    faculty: Joi.string().required(),
+                    group: Joi.string().required(),
                 }),
                 failAction: (req, h, err) => (err.isJoi
                     ? h.response(err.details[0]).takeover().code(400)

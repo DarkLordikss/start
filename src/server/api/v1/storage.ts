@@ -292,6 +292,25 @@ export async function getFacultyIds(data) {
   }
 }
 
+export async function getGroupIds(data) {
+  const students = await Profile.findAll({
+    where: {
+      is_teacher: false,
+      university: data.university,
+      faculty: data.faculty,
+      group: data.group,
+    }});
+  if (students != null) {
+    let student_ids = [];
+    for (let i = 0; i < students.length; i++) {
+      student_ids.push(students[i]['id']);
+    }
+    return student_ids;
+  } else {
+    return null;
+  }
+}
+
 export async function getStudentsMarksAvg(student_ids) {
   let avg = 0;
   let k = 0;
